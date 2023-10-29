@@ -7,6 +7,6 @@ import retrofit2.Response
 
 
 interface AuthRepository {
-    suspend fun login(body: LoginDto): Response<AuthModel>? = null
-    suspend fun register(body: RegisterDto): Response<AuthModel>? = null
+    suspend fun login(body: LoginDto): Response<AuthModel>
+    suspend fun register(body: RegisterDto): Response<AuthModel>
 }

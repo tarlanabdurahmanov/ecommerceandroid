@@ -4,6 +4,7 @@ package com.example.ecommercejetpack.data.remote
 import com.example.ecommercejetpack.common.Preferences
 import okhttp3.Interceptor
 import okhttp3.Response
+import okhttp3.logging.HttpLoggingInterceptor
 
 import javax.inject.Inject
 
@@ -19,3 +20,5 @@ class AuthInterceptor @Inject constructor(private val preferences: Preferences) 
         return chain.proceed(request.build())
     }
 }
+
+

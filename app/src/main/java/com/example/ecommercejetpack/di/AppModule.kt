@@ -35,7 +35,9 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
+    fun providesOkHttpClient(
+        authInterceptor: AuthInterceptor,
+    ): OkHttpClient {
         return OkHttpClient.Builder().addInterceptor(authInterceptor).build()
     }
 

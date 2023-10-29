@@ -1,7 +1,9 @@
 package com.example.ecommercejetpack.presentation.auth.login
 
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresExtension
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ecommercejetpack.common.NetworkResponse
@@ -24,6 +26,7 @@ class LoginViewModel @Inject constructor(
     private val _state = MutableStateFlow(LoginState())
     val state: StateFlow<LoginState> get() = _state
 
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     fun login(email: String, password: String, isChecked: Boolean) {
         val body = LoginDto(email, password);
         loginUseCase(body).onEach { result ->
@@ -34,11 +37,11 @@ class LoginViewModel @Inject constructor(
 
                 is NetworkResponse.Success -> {
                     result.data!!.token?.let { preferences.saveToken(it) }
+                    result.data.user?.let { preferences.saveUser(it) }
                     _state.value = LoginState(data = result.data)
                 }
 
                 is NetworkResponse.Error -> {
-
                     _state.value = LoginState(errorMessage = result.message)
                 }
             }

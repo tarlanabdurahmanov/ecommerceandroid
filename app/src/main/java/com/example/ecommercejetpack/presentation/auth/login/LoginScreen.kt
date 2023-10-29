@@ -1,6 +1,5 @@
 package com.example.ecommercejetpack.presentation.auth.login
 
-import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,12 +24,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -54,14 +51,14 @@ fun LoginScreen(
 
     //error message
     if (!state.errorMessage.isNullOrEmpty()) {
-        Toast(message = state.errorMessage.toString())
+        Toast(message = state.errorMessage!!)
     }
 
     if (data != null) {
         LaunchedEffect(Unit) {
             signInSuccess()
         }
-        Toast(message = data.token ?: "Something went wrong")
+        Toast(message = data.message ?: "Something went wrong")
     }
 
     //component

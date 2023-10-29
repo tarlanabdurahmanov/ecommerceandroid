@@ -35,7 +35,7 @@ fun NavGraphBuilder.authNavGraph(navController: NavController, context: Context)
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
                 )
                 navController.popBackStack()
-                navController.navigate(ProductsRoutes.ProductScreen.route)
+                navController.navigate(ProductsRoutes.ProductHomeScreen.route)
             })
         }
         composable(route = AuthRoutes.SignUpScreen.route) {

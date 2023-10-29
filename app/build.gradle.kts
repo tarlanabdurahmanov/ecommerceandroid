@@ -101,6 +101,8 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:$retrofitVersion")
     //okhttp
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:3.2.0")
+
 
     //material extended icon
     implementation("androidx.compose.material:material-icons-extended:1.5.4")
@@ -111,4 +113,5 @@ dependencies {
     //coil
     implementation("io.coil-kt:coil-compose:2.4.0")
     implementation("io.coil-kt:coil-gif:2.2.2")
+
 }

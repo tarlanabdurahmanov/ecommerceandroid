@@ -1,10 +1,11 @@
 package com.example.ecommercejetpack.presentation.auth.login
 
 import com.example.ecommercejetpack.domain.model.AuthModel
+import org.json.JSONObject
 
 
 data class LoginState(
     val isLoading: Boolean = false,
     val data: AuthModel? = null,
-    val errorMessage: String? = null
+    var errorMessage: String? = null,
 )

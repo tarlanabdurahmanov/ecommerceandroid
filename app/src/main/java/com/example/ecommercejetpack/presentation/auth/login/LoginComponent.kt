@@ -36,6 +36,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,8 +54,8 @@ fun LoginComponent(
     navController: NavController,
     isLoading: Boolean, onSignInClick: (email: String, password: String, checkBox: Boolean) -> Unit,
 ) {
-    var email by rememberSaveable { mutableStateOf("mail@gmail.com") }
-    var password by rememberSaveable { mutableStateOf("12345678") }
+    var email by rememberSaveable { mutableStateOf("1111@gmail.com") }
+    var password by rememberSaveable { mutableStateOf("11111111") }
     var checkBox by rememberSaveable { mutableStateOf(false) }
 
 
@@ -108,7 +109,7 @@ fun LoginComponent(
         Spacer(modifier = Modifier.height(8.dp))
         TextField(value = password, onValueChange = { newPass ->
             password = newPass
-        }, label = {
+        }, visualTransformation = PasswordVisualTransformation(), label = {
             Text(
                 text = "Password", style = TextStyle(
                     fontFamily = metropolisFont,
@@ -137,7 +138,7 @@ fun LoginComponent(
                     focusPassword.value = it.isFocused
                 }
             }, keyboardOptions = KeyboardOptions.Default.copy(
-            keyboardType = KeyboardType.Email,
+            keyboardType = KeyboardType.Password,
         ), shape = RoundedCornerShape(size = 8.dp), colors = TextFieldDefaults.textFieldColors(
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,

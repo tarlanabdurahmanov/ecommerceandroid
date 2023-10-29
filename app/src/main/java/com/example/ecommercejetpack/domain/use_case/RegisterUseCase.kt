@@ -26,19 +26,19 @@ class RegisterUseCase @Inject constructor(private val authRepository: AuthReposi
 
                 try {
                     val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
-                    emit(NetworkResponse.Error(jsonObj.getString("message").toString()))
+//                    emit(NetworkResponse.Error(jsonObj.getString("message").toString()))
                 } catch (e: Exception) {
-                    emit(NetworkResponse.Error("Something went wrong."))
+//                    emit(NetworkResponse.Error("Something went wrong."))
                 }
 
             } else {
-                emit(NetworkResponse.Error("Something went wrong"))
+//                emit(NetworkResponse.Error("Something went wrong"))
             }
         } catch (e: HttpException) {
-            emit(NetworkResponse.Error(e.localizedMessage ?: "An unexpected error occurred."))
+//            emit(NetworkResponse.Error(e.localizedMessage ?: "An unexpected error occurred."))
 
         } catch (e: IOException) {
-            emit(NetworkResponse.Error("Check your internet connection"))
+//            emit(NetworkResponse.Error("Check your internet connection"))
         }
     }
 }

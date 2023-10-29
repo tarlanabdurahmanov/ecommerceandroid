@@ -8,13 +8,15 @@ import javax.inject.Singleton
 import androidx.security.crypto.MasterKey
 import com.example.ecommercejetpack.common.Constants.AUTH_TOKEN
 import com.example.ecommercejetpack.common.Constants.USER
+import com.example.ecommercejetpack.domain.model.User
+import com.google.gson.Gson
+import org.json.JSONObject
 
 
 @Singleton
 class Preferences @Inject constructor(@ApplicationContext context: Context) {
-    private var masterKey = MasterKey.Builder(context)
-        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-        .build()
+    private var masterKey =
+        MasterKey.Builder(context).setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build()
 
     private var sharedPreferences = EncryptedSharedPreferences.create(
         context,
@@ -30,6 +32,21 @@ class Preferences @Inject constructor(@ApplicationContext context: Context) {
         editor.putString(AUTH_TOKEN, token)
         editor.commit()
         editor.apply()
+    }
+
+    fun saveUser(user: User) {
+        val gson = Gson();
+        val json = gson.toJson(user);
+        editor.putString(USER, json);
+        editor.commit()
+        editor.apply()
+    }
+
+    fun getUser(): User {
+        val gson = Gson();
+        val user = sharedPreferences.getString(USER, "")
+        return gson.fromJson(user, User::class.java)
+
     }
 
     fun getToken(): String? {
