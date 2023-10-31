@@ -18,7 +18,7 @@ class SplashViewModel @Inject constructor(private val preferences: Preferences) 
         val userFound = preferences.getToken()
         Handler(Looper.myLooper()!!).postDelayed(Runnable {
             _state.value = SplashState(tokenExist = !userFound.isNullOrEmpty(), navTrigger = true)
-        }, 2500)
+        }, 1000)
     }
 
 

@@ -17,6 +17,11 @@ object Constants {
 
     //token
     const val BEARER = "Bearer "
+
+
+    const val PRODUCTS = "/api/products"
+    const val PRODUCT_DETAIL = "/api/products/detail"
+
 }
 
 

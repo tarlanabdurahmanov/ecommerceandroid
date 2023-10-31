@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.ecommercejetpack.presentation.bottomnavigation.bottomNavGraph
 import com.example.ecommercejetpack.presentation.graphs.auth.authNavGraph
 import com.example.ecommercejetpack.presentation.graphs.products.ProductsRoutes
 import com.example.ecommercejetpack.presentation.graphs.products.productsNavGraph
@@ -18,7 +19,6 @@ fun RootNavigationGraph(navHostController: NavHostController, context: Context) 
     ) {
         authNavGraph(navHostController, context)
         productsNavGraph(navHostController = navHostController)
-
         composable(Graph.SPLASH) {
             SplashScreen(navigate = { isUserExist ->
                 if (isUserExist) {

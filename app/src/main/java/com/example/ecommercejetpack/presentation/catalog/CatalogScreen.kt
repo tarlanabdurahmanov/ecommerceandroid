@@ -214,7 +214,7 @@ fun CatalogScreen() {
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     content = {
                         items(6) {
-                            ProductItem(percent = if (it % 2 == 0) "-20" else null)
+//                            ProductItem(percent = if (it % 2 == 0) "-20" else null)
                         }
                     },
                     modifier = Modifier.fillMaxSize()

@@ -45,9 +45,9 @@ import com.example.ecommercejetpack.ui.theme.Primary
 fun RegisterComponent(
     isLoading: Boolean, onSignUpClick: (name: String, email: String, password: String) -> Unit
 ) {
-    var email by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
-    var name by rememberSaveable { mutableStateOf("") }
+    var email by rememberSaveable { mutableStateOf("tarlan@gmail.com") }
+    var password by rememberSaveable { mutableStateOf("12345678") }
+    var name by rememberSaveable { mutableStateOf("tarlan") }
 
 
     val focusName = remember { mutableStateOf(false) }

@@ -111,7 +111,7 @@ dependencies {
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
 
     //coil
-    implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("io.coil-kt:coil-gif:2.2.2")
 
 }

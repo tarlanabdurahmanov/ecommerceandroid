@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-    private val signUpUseCase: RegisterUseCase,
+    private val registerUseCase: RegisterUseCase,
     private val preferences: Preferences
 ) : ViewModel() {
 
@@ -25,7 +25,7 @@ class RegisterViewModel @Inject constructor(
 
     fun register(name: String, email: String, password: String) {
         val body = RegisterDto(name, email, password);
-        signUpUseCase(body).onEach { result ->
+        registerUseCase(body).onEach { result ->
             when (result) {
                 is NetworkResponse.Loading -> {
                     _state.value = RegisterState(isLoading = true)
@@ -37,7 +37,6 @@ class RegisterViewModel @Inject constructor(
                 }
 
                 is NetworkResponse.Error -> {
-
                     _state.value = RegisterState(errorMessage = result.message)
                 }
             }

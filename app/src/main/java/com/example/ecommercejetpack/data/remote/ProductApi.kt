@@ -1,6 +1,9 @@
 package com.example.ecommercejetpack.data.remote
 
+import com.example.ecommercejetpack.common.Constants
 import com.example.ecommercejetpack.domain.model.Product
+import com.example.ecommercejetpack.domain.model.ProductDetailModel
+import com.example.ecommercejetpack.domain.model.ProductModel
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -10,20 +13,9 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface ProductApi {
+    @POST(Constants.PRODUCTS)
+    suspend fun getProducts(): Response<ProductModel>
 
-    @GET("/api/products")
-    suspend fun getProducts(): Response<List<Product>>
-
-//    @POST("/api/product/create")
-//    suspend fun createProduct(@Body body: CreateProductDto): Response<ProductModel>
-
-//
-//    @PUT("/api/products/{productId}")
-//    suspend fun updateProduct(
-//        @Path("productId") productId: String,
-//        @Body body: UpdateProductDto
-//    ): Response<ProductModel>
-//
-//    @DELETE("/api/products/{productId}")
-//    suspend fun deleteProduct(@Path("productId") productId: String): Response<ProductModel>
+    @POST(Constants.PRODUCT_DETAIL)
+    suspend fun productDetail(@Path("productId") productId: Int): Response<ProductDetailModel>
 }

@@ -52,6 +52,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.ecommercejetpack.R
 import com.example.ecommercejetpack.common.metropolisFont
 import com.example.ecommercejetpack.presentation.common.BottomSheet
@@ -67,7 +68,9 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductDetailScreen() {
+fun ProductDetailScreen(
+    navController: NavController,
+) {
 
     var showSheet = remember { mutableStateOf(false) }
     val modalBottomSheetState = rememberModalBottomSheetState()
@@ -152,7 +155,9 @@ fun ProductDetailScreen() {
                 elevation = 8.dp, spotColor = Color(0x40D32626), ambientColor = Color(0x40D32626)
             ),
             navigationIcon = {
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = {
+                    navController.popBackStack()
+                }) {
                     Image(
                         painter = painterResource(id = R.drawable.back), contentDescription = "back"
                     )
@@ -377,7 +382,7 @@ fun ProductDetailScreen() {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 items(5) {
-                    ProductItem(percent = "-20")
+//                    ProductItem(percent = "-20")
                 }
             }
 
@@ -391,7 +396,6 @@ fun ProductDetailScreen() {
 @Composable
 fun ProductDetailScreenPreview() {
     EcommerceJetpackTheme {
-        ProductDetailScreen()
     }
 
 }
