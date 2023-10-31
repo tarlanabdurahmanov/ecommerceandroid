@@ -2,6 +2,7 @@ package com.example.ecommercejetpack.presentation.graphs.products
 
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresExtension
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Constraints
@@ -25,8 +26,19 @@ fun NavGraphBuilder.productsNavGraph(navHostController: NavHostController) {
         composable(ProductsRoutes.ProductHomeScreen.route) {
             ProductsHomeScreen(navHostController)
         }
-        composable(ProductsRoutes.ProductDetailScreen.route) {
-            ProductDetailScreen(navHostController)
+        composable(ProductsRoutes.ProductDetailScreen.route) { navBackStackEntry ->
+
+            val productId = navBackStackEntry.arguments?.getString("productId")
+
+            productId?.let { id ->
+                ProductDetailScreen(navHostController, productId = id.toInt())
+            }
+
+            //            navController.navigate(
+//                ProductsRoutes.ProductDetailScreen.route.replace(
+//                    oldValue = "{productId}", newValue =
+//                )
+//            )/* Extracting the id from the route */
         }
 
     }

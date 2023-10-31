@@ -39,7 +39,7 @@ fun NavGraphBuilder.bottomNavGraph(
     }
 
     composable(BottomNavigationRoutes.FavouritesScreen.route) {
-        ProductDetailScreen(navController)
+        FiltersScreen()
     }
     composable(BottomNavigationRoutes.UserScreen.route) {
         FiltersScreen()

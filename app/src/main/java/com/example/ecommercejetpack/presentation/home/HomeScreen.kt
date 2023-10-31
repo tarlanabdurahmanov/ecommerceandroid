@@ -98,8 +98,12 @@ fun HomeScreen(
                 LazyRow {
                     data?.products?.let { products ->
                         items(products) { product ->
-                            ProductItem(product = product, onClick = {
-                                navController.navigate(ProductsRoutes.ProductDetailScreen.route)
+                            ProductItem(product = product, onClick = { id ->
+                                navController.navigate(
+                                    ProductsRoutes.ProductDetailScreen.route.replace(
+                                        oldValue = "{productId}", newValue = id.toString()
+                                    )
+                                )
                             })
                         }
                     }
@@ -108,8 +112,12 @@ fun HomeScreen(
                 LazyRow {
                     data?.products?.let { products ->
                         items(products) { product ->
-                            ProductItem(product = product, onClick = {
-                                navController.navigate(ProductsRoutes.ProductDetailScreen.route)
+                            ProductItem(product = product, onClick = { id ->
+                                navController.navigate(
+                                    ProductsRoutes.ProductDetailScreen.route.replace(
+                                        oldValue = "{productId}", newValue = id.toString()
+                                    )
+                                )
                             })
                         }
                     }

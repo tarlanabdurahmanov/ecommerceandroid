@@ -42,14 +42,14 @@ import com.example.ecommercejetpack.domain.model.Product
 @Composable
 fun ProductItem(
     product: Product,
-    onClick: () -> Unit,
+    onClick: (Long) -> Unit,
 ) {
 
     Column(
         modifier = Modifier
             .padding(21.dp)
             .clickable {
-                onClick()
+                onClick(product.id!!)
             },
     ) {
         Box(
@@ -66,6 +66,7 @@ fun ProductItem(
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .height(184.dp)
+                        .width(148.dp)
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(8.dp)),
                 )
@@ -127,7 +128,7 @@ fun ProductItem(
                 )
             }
             Text(
-                text = "(10)", style = TextStyle(
+                text = product.id.toString(), style = TextStyle(
                     fontSize = 10.sp,
                     lineHeight = 8.sp,
                     fontFamily = metropolisFont,
@@ -171,3 +172,5 @@ fun ProductItem(
         }
     }
 }
+
+

@@ -14,6 +14,7 @@ interface AuthApi {
     @POST("register")
     suspend fun register(@Body body: RegisterDto): Response<AuthModel>
 
+
     @Headers("Accept: application/json")
     @POST("login")
     suspend fun login(@Body body: LoginDto): Response<AuthModel>

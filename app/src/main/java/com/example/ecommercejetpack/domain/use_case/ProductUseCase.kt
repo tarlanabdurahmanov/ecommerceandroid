@@ -20,7 +20,6 @@ class ProductUseCase @Inject constructor(private val productRepository: ProductR
         try {
             emit(NetworkResponse.Loading())
             val response = productRepository.getProducts()
-            delay(2000)
             if (response.isSuccessful && response.body() != null) {
                 emit(NetworkResponse.Success(data = response.body()))
             } else {

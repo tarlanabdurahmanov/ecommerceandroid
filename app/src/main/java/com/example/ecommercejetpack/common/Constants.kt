@@ -20,7 +20,7 @@ object Constants {
 
 
     const val PRODUCTS = "/api/products"
-    const val PRODUCT_DETAIL = "/api/products/detail"
+    const val PRODUCT_DETAIL = "/api/product/detail"
 
 }
 
