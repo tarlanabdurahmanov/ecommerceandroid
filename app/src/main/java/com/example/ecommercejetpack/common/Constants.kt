@@ -21,6 +21,8 @@ object Constants {
 
     const val PRODUCTS = "/api/products"
     const val PRODUCT_DETAIL = "/api/product/detail"
+    const val PRODUCT_CARTS = "/api/carts"
+    const val ADD_EDIT_PRODUCT_CARTS = "/api/addEditCart"
 
 }
 

@@ -2,8 +2,11 @@ package com.example.ecommercejetpack.data.repository
 
 
 import com.example.ecommercejetpack.data.remote.ProductApi
+import com.example.ecommercejetpack.data.remote.dto.ProductCartDto
 import com.example.ecommercejetpack.data.remote.dto.ProductDetailDto
+import com.example.ecommercejetpack.domain.model.AddEditProductCartModel
 import com.example.ecommercejetpack.domain.model.Product
+import com.example.ecommercejetpack.domain.model.ProductCartModel
 import com.example.ecommercejetpack.domain.model.ProductDetailModel
 import com.example.ecommercejetpack.domain.model.ProductModel
 import com.example.ecommercejetpack.domain.repository.ProductRepository
@@ -19,5 +22,14 @@ class ProductRepositoryImpl @Inject constructor(private val api: ProductApi) : P
     override suspend fun productDetail(productDetailDto: ProductDetailDto): Response<ProductDetailModel> {
         return api.productDetail(productDetailDto)
     }
+
+    override suspend fun productCarts(): Response<ProductCartModel> {
+        return api.productCarts()
+    }
+
+    override suspend fun addEditProductCarts(productCartDto: ProductCartDto): Response<AddEditProductCartModel> {
+        return api.addEditProductCarts(productCartDto)
+    }
+
 
 }
