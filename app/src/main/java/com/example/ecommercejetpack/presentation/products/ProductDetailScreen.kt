@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -28,7 +27,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,14 +39,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -67,17 +63,20 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.ecommercejetpack.R
 import com.example.ecommercejetpack.common.metropolisFont
+import com.example.ecommercejetpack.data.remote.dto.ProductCartDto
 import com.example.ecommercejetpack.domain.model.Image
 import com.example.ecommercejetpack.domain.model.ProductDetailModel
 import com.example.ecommercejetpack.presentation.common.BottomSheet
 import com.example.ecommercejetpack.presentation.common.DefaultButton
 import com.example.ecommercejetpack.presentation.common.ProductItem
 import com.example.ecommercejetpack.presentation.graphs.products.ProductsRoutes
+import com.example.ecommercejetpack.presentation.mybag.MyBagViewModel
 import com.example.ecommercejetpack.ui.theme.EcommerceJetpackTheme
 import com.example.ecommercejetpack.ui.theme.Gray
 import com.example.ecommercejetpack.ui.theme.Primary
 import com.example.ecommercejetpack.ui.theme.Typography
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
@@ -88,30 +87,42 @@ fun ProductDetailScreen(
     navController: NavController,
     productId: Int,
     viewModel: ProductViewModel = hiltViewModel(),
+    myBagViewModel: MyBagViewModel = hiltViewModel(),
 ) {
 
 
     val stateDetail: ProductDetailState by viewModel.stateDetail.collectAsState()
     val data: ProductDetailModel? = stateDetail.data
 
-
     LaunchedEffect(Unit) {
         if (data == null) {
             viewModel.productDetail(productId)
         }
     }
-    val showSheet = remember { mutableStateOf(false) }
-    val modalBottomSheetState = rememberModalBottomSheetState()
+    val showSheetSizes = remember { mutableStateOf(false) }
+    val showSheetColor = remember { mutableStateOf(false) }
+    var isAddToCart by remember { mutableStateOf(false) }
+    val sizeModalBottomSheetState = rememberModalBottomSheetState()
+    val colorModalBottomSheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
 
     val selectedSize = remember { mutableStateOf(0) }
+    val selectedColor = remember { mutableStateOf(0) }
 
 
 
-    if (showSheet.value) {
+    if (data?.cart != null) {
+        isAddToCart = true
+        selectedColor.value = data.cart.colorId!!
+        selectedSize.value = data.cart.sizeId!!
+    }
+
+
+
+    if (showSheetSizes.value) {
         BottomSheet(
-            onDismiss = { showSheet.value = false },
-            sheetState = modalBottomSheetState,
+            onDismiss = { showSheetSizes.value = false },
+            sheetState = sizeModalBottomSheetState,
         ) {
             Column {
                 Text(
@@ -165,10 +176,85 @@ fun ProductDetailScreen(
                         }
                     },
                 )
-                DefaultButton(text = "ADD TO CART", modifier = Modifier.padding(16.dp)) {
+                DefaultButton(
+                    text = "APPLY",
+                    modifier = Modifier.padding(16.dp)
+                ) {
                     scope.launch {
-                        modalBottomSheetState.hide()
-                        showSheet.value = false
+                        showSheetSizes.value = false
+                        sizeModalBottomSheetState.hide()
+
+                    }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+        }
+    }
+
+    if (showSheetColor.value) {
+        BottomSheet(
+            onDismiss = { showSheetColor.value = false },
+            sheetState = colorModalBottomSheetState,
+        ) {
+            Column {
+                Text(
+                    "Select color",
+                    style = Typography.headlineSmall,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 22.dp)
+                )
+
+
+                LazyVerticalStaggeredGrid(
+                    columns = StaggeredGridCells.Adaptive(minSize = 100.dp),
+                    verticalItemSpacing = 4.dp,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    contentPadding = PaddingValues(16.dp),
+                    content = {
+                        items(data?.colors!!) { color ->
+                            Box(modifier = Modifier
+                                .padding(end = 16.dp)
+                                .border(
+                                    width = 0.4.dp,
+                                    color = if (selectedColor.value == color.colorID) Primary else Color(
+                                        0xFF9B9B9B
+                                    ),
+                                    shape = RoundedCornerShape(size = 8.dp)
+                                )
+                                .width(100.dp)
+                                .height(40.dp)
+                                .background(
+                                    color = if (selectedColor.value == color.colorID) Primary else Color(
+                                        0xFFFFFFFF
+                                    ), shape = RoundedCornerShape(size = 8.dp)
+                                )
+                                .clickable(
+                                    role = Role.Button
+                                ) {
+                                    selectedColor.value = color.colorID!!
+                                }, contentAlignment = Alignment.Center, content = {
+                                Text(
+                                    text = color.color.toString(),
+                                    textAlign = TextAlign.Center,
+                                    style = Typography.displayMedium.copy(
+                                        color = if (selectedColor.value == color.colorID) Color.White else Color(
+                                            0xFF222222
+                                        ),
+                                    )
+                                )
+                            })
+                        }
+                    },
+                )
+                DefaultButton(
+                    text = "APPLY",
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    scope.launch {
+                        colorModalBottomSheetState.hide()
+                        showSheetSizes.value = false
                     }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
@@ -221,7 +307,33 @@ fun ProductDetailScreen(
                 .background(color = Color.White)
                 .padding(vertical = 20.dp, horizontal = 16.dp)
         ) {
-            DefaultButton(text = "ADD TO CART", isLoading = stateDetail.isLoading) {
+            DefaultButton(
+                text = if (!isAddToCart) "ADD TO CART" else "REMOVE CART",
+                isLoading = stateDetail.isLoading
+            ) {
+
+                if (!isAddToCart) {
+                    myBagViewModel.addEditProductCarts(
+                        productCartDto = ProductCartDto(
+                            type = 0,
+                            productId = data?.product?.id,
+                            colorId = selectedColor.value,
+                            sizeId = selectedSize.value,
+                            count = 1,
+                        )
+                    )
+                } else {
+
+                    myBagViewModel.addEditProductCarts(
+                        productCartDto = ProductCartDto(
+                            type = 2,
+                            productId = data?.product?.id,
+                        )
+                    )
+                }
+                isAddToCart = !isAddToCart
+                selectedColor.value = 0
+                selectedSize.value = 0
 
             }
         }
@@ -264,7 +376,7 @@ fun ProductDetailScreen(
                             color = Color(0xFFFFFFFF), shape = RoundedCornerShape(size = 8.dp)
                         )
                         .clickable {
-                            showSheet.value = true
+                            showSheetSizes.value = true
                         }) {
                         Row(
                             modifier = Modifier
@@ -294,6 +406,9 @@ fun ProductDetailScreen(
                             .background(
                                 color = Color(0xFFFFFFFF), shape = RoundedCornerShape(size = 8.dp)
                             )
+                            .clickable {
+                                showSheetColor.value = true
+                            }
                     ) {
                         Row(
                             modifier = Modifier

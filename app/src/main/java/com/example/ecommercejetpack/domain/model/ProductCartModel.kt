@@ -9,12 +9,11 @@ data class ProductCartModel(
 
 data class Cart(
     val id: Long? = null,
-    @SerializedName("product_id")
-    val productID: Long? = null,
+    @SerializedName("product_id") val productID: Long? = null,
     val name: String? = null,
-    @SerializedName("cover_image")
-    val coverImage: String? = null,
+    @SerializedName("cover_image") val coverImage: String? = null,
     val price: Int? = null,
     val size: Long? = null,
     val color: String? = null,
+    var count: Int? = null,
 )

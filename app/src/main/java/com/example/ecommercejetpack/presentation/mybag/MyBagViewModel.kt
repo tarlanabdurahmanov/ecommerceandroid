@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ecommercejetpack.common.NetworkResponse
 import com.example.ecommercejetpack.data.remote.dto.ProductCartDto
+import com.example.ecommercejetpack.domain.model.Cart
 import com.example.ecommercejetpack.domain.use_case.AddEditProductCartUseCase
 import com.example.ecommercejetpack.domain.use_case.ProductCartUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,14 +31,14 @@ class MyBagViewModel @Inject constructor(
     private val _state = MutableStateFlow(MyBagState())
     val state: StateFlow<MyBagState> get() = _state
 
-
     val totalAmount = MutableStateFlow(0.0)
+
 
     init {
         getProductCarts()
     }
 
-    private fun getProductCarts() {
+    fun getProductCarts() {
         productCartUseCase().onEach { result ->
             when (result) {
                 is NetworkResponse.Loading -> {
@@ -46,6 +47,7 @@ class MyBagViewModel @Inject constructor(
 
                 is NetworkResponse.Success -> {
                     _state.value = MyBagState(data = result.data)
+                    totalAmount.value = 0.0
                     result.data?.carts?.map {
                         totalAmount.value += it.price!!
                     }
@@ -58,8 +60,7 @@ class MyBagViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun addEditProductCarts() {
-        val productCartDto = ProductCartDto(type = 0)
+    fun addEditProductCarts(productCartDto: ProductCartDto) {
         addEditProductCartUseCase(productCartDto = productCartDto).onEach { result ->
             when (result) {
                 is NetworkResponse.Loading -> {
@@ -67,7 +68,7 @@ class MyBagViewModel @Inject constructor(
                 }
 
                 is NetworkResponse.Success -> {
-//                    _state.value = MyBagState(data = result.data)
+                    getProductCarts()
                 }
 
                 is NetworkResponse.Error -> {

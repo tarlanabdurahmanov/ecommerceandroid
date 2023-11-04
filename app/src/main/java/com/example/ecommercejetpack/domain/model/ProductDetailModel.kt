@@ -9,6 +9,7 @@ data class ProductDetailModel(
     val sizes: List<Size>? = null,
     val colors: List<Color>? = null,
     val features: List<Feature>? = null,
+    val cart: ProductCart? = null,
     @SerializedName("similarProducts") val similarProducts: List<Product>? = null,
 )
 
@@ -52,4 +53,11 @@ data class ProductDetail(
 data class Size(
     @SerializedName("size_id") val sizeID: Int? = null,
     val size: Int? = null,
+)
+
+data class ProductCart(
+    val id: Int? = null,
+    @SerializedName("product_id") val productId: Int? = null,
+    @SerializedName("color_id") val colorId: Int? = null,
+    @SerializedName("size_id") val sizeId: Int? = null,
 )

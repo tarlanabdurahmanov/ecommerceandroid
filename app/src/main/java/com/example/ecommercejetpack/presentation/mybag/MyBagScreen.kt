@@ -2,27 +2,22 @@ package com.example.ecommercejetpack.presentation.mybag
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.util.Log
-import android.widget.Space
 import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -36,7 +31,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,24 +47,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.PopupProperties
-import androidx.compose.ui.window.SecureFlagPolicy
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.ecommercejetpack.R
 import com.example.ecommercejetpack.common.metropolisFont
+import com.example.ecommercejetpack.data.remote.dto.ProductCartDto
 import com.example.ecommercejetpack.domain.model.Cart
 import com.example.ecommercejetpack.domain.model.ProductCartModel
 import com.example.ecommercejetpack.presentation.common.DefaultButton
-import com.example.ecommercejetpack.presentation.home.HomeRowText
-import com.example.ecommercejetpack.ui.theme.EcommerceJetpackTheme
 import com.example.ecommercejetpack.ui.theme.Gray
 import com.example.ecommercejetpack.ui.theme.Typography
-import kotlinx.coroutines.launch
 
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
@@ -81,19 +70,18 @@ fun MyBagScreen(
     viewModel: MyBagViewModel = hiltViewModel(),
 ) {
 
-    val scope = rememberCoroutineScope()
 
     val state: MyBagState by viewModel.state.collectAsState()
     val data: ProductCartModel? = state.data
-    var expanded by remember { mutableStateOf(false) }
+    var selectedIndex by remember { mutableStateOf(-1) }
 
-    val carts = remember { mutableStateListOf<Cart>() }
     var totalAmount by remember { mutableStateOf(0.0) }
-
-    data?.carts?.let { carts.addAll(it) }
 
     totalAmount = viewModel.totalAmount.value
 
+    LaunchedEffect(key1 = Unit, block = {
+        viewModel.getProductCarts()
+    })
 
 
     Scaffold(containerColor = Color.White, topBar = {
@@ -133,9 +121,10 @@ fun MyBagScreen(
                         )
                     )
                     Spacer(modifier = Modifier.height(24.dp))
-                    if (carts != null) {
+                    if (data?.carts != null) {
                         LazyColumn {
-                            items(carts) { cart ->
+                            itemsIndexed(data.carts) { index, cart ->
+                                var itemCount by remember { mutableStateOf(cart.count) }
                                 Row(
                                     modifier = Modifier
                                         .padding(bottom = 24.dp)
@@ -208,7 +197,9 @@ fun MyBagScreen(
                                                 }
                                             }
                                             Box {
-                                                IconButton(onClick = { expanded = !expanded }) {
+                                                IconButton(onClick = {
+                                                    selectedIndex = index
+                                                }) {
                                                     Image(
                                                         painter = painterResource(id = R.drawable.vertical_dots),
                                                         contentDescription = "vertical_dots",
@@ -225,8 +216,8 @@ fun MyBagScreen(
                                                         color = Color(0xFFFFFFFF),
                                                         shape = RoundedCornerShape(size = 8.dp)
                                                     ),
-                                                    expanded = expanded,
-                                                    onDismissRequest = { expanded = false }) {
+                                                    expanded = index == selectedIndex,
+                                                    onDismissRequest = { selectedIndex = -1 }) {
                                                     DropdownMenuItem(
                                                         text = {
                                                             Text(
@@ -242,8 +233,15 @@ fun MyBagScreen(
                                                             style = Typography.labelMedium,
                                                         )
                                                     }, onClick = {
-                                                        carts.remove(cart)
                                                         totalAmount -= cart.price!!
+                                                        viewModel.addEditProductCarts(
+                                                            productCartDto = ProductCartDto(
+                                                                type = 2,
+                                                                productId = cart.productID!!.toInt()
+                                                            )
+                                                        )
+
+
                                                     })
                                                 }
                                             }
@@ -255,53 +253,54 @@ fun MyBagScreen(
                                             verticalAlignment = Alignment.CenterVertically
                                         ) {
                                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                                Box(
-                                                    modifier = Modifier
-                                                        .shadow(
-                                                            elevation = 8.dp,
-                                                            spotColor = Color(0x1A000000),
-                                                            shape = RoundedCornerShape(29.dp)
-                                                        )
-                                                        .width(36.dp)
-                                                        .height(36.dp)
-                                                        .background(
-                                                            color = Color(0xFFFFFFFF),
-                                                            shape = RoundedCornerShape(size = 29.dp)
-                                                        )
-
-                                                        .padding(10.dp)
-                                                ) {
+                                                Box(modifier = Modifier
+                                                    .shadow(
+                                                        elevation = 8.dp,
+                                                        spotColor = Color(0x1A000000),
+                                                        shape = RoundedCornerShape(29.dp)
+                                                    )
+                                                    .width(36.dp)
+                                                    .height(36.dp)
+                                                    .background(
+                                                        color = Color(0xFFFFFFFF),
+                                                        shape = RoundedCornerShape(size = 29.dp)
+                                                    )
+                                                    .padding(10.dp)
+                                                    .clickable {
+                                                        itemCount = itemCount?.minus(1)
+                                                    }) {
                                                     Image(
                                                         painter = painterResource(id = R.drawable.minus),
-                                                        contentDescription = "heart",
+                                                        contentDescription = "minus",
                                                         modifier = Modifier
                                                             .width(24.dp)
                                                             .height(24.dp)
                                                     )
                                                 }
                                                 Text(
-                                                    text = "1",
+                                                    text = itemCount.toString(),
                                                     style = Typography.displayMedium,
                                                     modifier = Modifier.padding(horizontal = 16.dp)
                                                 )
-                                                Box(
-                                                    modifier = Modifier
-                                                        .shadow(
-                                                            elevation = 8.dp,
-                                                            spotColor = Color(0x1A000000),
-                                                            shape = RoundedCornerShape(29.dp)
-                                                        )
-                                                        .width(36.dp)
-                                                        .height(36.dp)
-                                                        .background(
-                                                            color = Color(0xFFFFFFFF),
-                                                            shape = RoundedCornerShape(size = 29.dp)
-                                                        )
-                                                        .padding(10.dp)
-                                                ) {
+                                                Box(modifier = Modifier
+                                                    .shadow(
+                                                        elevation = 8.dp,
+                                                        spotColor = Color(0x1A000000),
+                                                        shape = RoundedCornerShape(29.dp)
+                                                    )
+                                                    .width(36.dp)
+                                                    .height(36.dp)
+                                                    .background(
+                                                        color = Color(0xFFFFFFFF),
+                                                        shape = RoundedCornerShape(size = 29.dp)
+                                                    )
+                                                    .padding(10.dp)
+                                                    .clickable {
+                                                        itemCount = itemCount?.plus(1)
+                                                    }) {
                                                     Image(
                                                         painter = painterResource(id = R.drawable.plus),
-                                                        contentDescription = "heart",
+                                                        contentDescription = "plus",
                                                         modifier = Modifier
                                                             .width(24.dp)
                                                             .height(24.dp)
